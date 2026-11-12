@@ -1,57 +1,93 @@
-# Clase FastAPI
+# TP1 - API REST con FastAPI: ABM de Usuarios y Productos
 
-Clase para aprender **FastAPI** y **Pydantic**.
+Proyecto correspondiente al **Trabajo Práctico 1** de la materia **Programación IV (UTN - TUP)**. Implementa una API RESTful en memoria utilizando **FastAPI** y **Pydantic v2**, abarcando el CRUD completo de las entidades `User` y `Product`.
 
-## Crear el entorno virtual (venv)
+## Estructura del Proyecto
 
-Desde esta carpeta (`clase-fastapi`):
-
-```bash
-python3 -m venv .venv
+```text
+clase-fastapi/
+├── main.py                # Punto de entrada de la aplicación FastAPI
+├── models/
+│   ├── users.py           # Esquemas Pydantic para Usuarios
+│   └── products.py        # Esquemas Pydantic para Productos
+├── routers/
+│   ├── users.py           # Endpoints CRUD y filtrado de Usuarios
+│   └── products.py        # Endpoints CRUD y filtrado de Productos
+├── requirements.txt       # Dependencias del proyecto
+├── setup.cfg              # Configuración de pycodestyle (PEP 8)
+└── pyrightconfig.json     # Configuración de chequeo estático de tipos
 ```
 
-Activar el entorno virtual:
+## Instrucciones de Instalación y Ejecución
+
+### 1. Clonar el repositorio
 
 ```bash
-# macOS / Linux
-source .venv/bin/activate
+git clone https://github.com/leandrogabas/utn-tup-2026-python.git
+cd utn-tup-2026-python/clase-fastapi
+```
 
-# Windows (PowerShell)
+### 2. Crear y activar el entorno virtual
+
+```bash
+# Creación del entorno virtual
+python -m venv .venv
+
+# Activación en Windows (PowerShell)
 .venv\Scripts\Activate.ps1
+
+# Activación en Windows (CMD)
+.venv\Scripts\activate.bat
+
+# Activación en Linux / macOS
+source .venv/bin/activate
 ```
 
-## Instalar los requerimientos
-
-Con el entorno virtual activado:
+### 3. Instalar dependencias
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Ejecutar la aplicación
+### 4. Levantar el servidor de desarrollo
 
 ```bash
 fastapi dev main.py
 ```
 
-La API quedará disponible en `http://127.0.0.1:8000` y la documentación interactiva en `http://127.0.0.1:8000/docs`.
+*(Alternativamente con Uvicorn: `uvicorn main:app --reload`)*
 
-## Lint y chequeo de tipos
+---
 
-El proyecto incluye configuración local para dos herramientas:
+## Acceso a la Documentación Interactiva (Swagger UI)
 
-- **[`setup.cfg`](./setup.cfg)**: configuración de [`pycodestyle`](https://pycodestyle.pycqa.org/) (chequeo de estilo PEP 8). Define `max-line-length = 79` y excluye `.venv` y `__pycache__` del análisis.
-- **[`pyrightconfig.json`](./pyrightconfig.json)**: configuración de [`pyright`](https://microsoft.github.io/pyright/) (chequeo de tipos). Apunta al entorno virtual local (`.venv`) para resolver las dependencias instaladas y excluye `.venv` y `__pycache__`.
+Con el servidor en ejecución, la API estará disponible en `http://127.0.0.1:8000`:
 
-`pyright` ya está incluido en `requirements.txt`. `pycodestyle` no, así que hay que instalarlo aparte.
+- **Swagger UI (Interactivo):** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **ReDoc (Documentación alternativa):** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
-Con el entorno virtual activado, correr:
+Desde `/docs` se pueden ejecutar y probar directamente todos los endpoints (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) mediante el botón **"Try it out"**.
 
-```bash
-pip install pycodestyle
-python -m pycodestyle .
-```
+## Resumen de Endpoints
 
-```bash
-pyright
-```
+### Usuarios (`/user`)
+| Método | Ruta | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/user` | Lista todos los usuarios. Permite filtrar por query param `?is_active=true` o `?is_active=false`. |
+| `GET` | `/user/{id}` | Obtiene un usuario específico por su `id`. |
+| `POST` | `/user` | Crea un nuevo usuario validando unicidad de `id`. |
+| `PUT` | `/user/{id}` | Reemplaza íntegramente los datos de un usuario existente. |
+| `PATCH` | `/user/{id}` | Modifica parcialmente los campos enviados de un usuario. |
+| `DELETE` | `/user/{id}` | Elimina un usuario por su `id`. |
+
+### Productos (`/product`)
+Entidad compuesta por 5 campos: `id` (`int`), `nombre` (`str`), `categoria` (`str`), `precio` (`float`), `stock` (`int`).
+
+| Método | Ruta | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/product` | Lista todos los productos. Permite filtrar por query param `?categoria=...`. |
+| `GET` | `/product/{id}` | Obtiene un producto específico por su `id`. |
+| `POST` | `/product` | Crea un nuevo producto validando tipos, restricciones numéricas y unicidad de `id`. |
+| `PUT` | `/product/{id}` | Reemplaza todos los atributos del producto especificado. |
+| `PATCH` | `/product/{id}` | Actualiza parcialmente los atributos del producto. |
+| `DELETE` | `/product/{id}` | Elimina un producto por su `id`. |

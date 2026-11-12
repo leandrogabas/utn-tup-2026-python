@@ -1,14 +1,15 @@
 from fastapi import FastAPI
-from routers import users
+from routers import users, products
 
-# Create the application instance
-app = FastAPI()
+app = FastAPI(
+    title="TP1 - ABM Usuarios y Productos",
+    version="1.0.0",
+)
 
-# Router to user endpoints
 app.include_router(users.router)
+app.include_router(products.router)
 
 
-# Define a GET route for the root URL
 @app.get("/")
 def read_root():
     mensaje = "Primer clase de FastAPI"
